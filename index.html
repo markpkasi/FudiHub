@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Food Order</title>
+</head>
+<body>
+    <h1>Restaurant Menu</h1>
+    <div id="menu"></div>
+    
+    <h2>Place an Order</h2>
+    <select id="restaurant">
+        <option value="1">Restaurant A</option>
+        <option value="2">Restaurant B</option>
+    </select>
+    <select id="item">
+        <option value="1">Pizza</option>
+        <option value="2">Burger</option>
+        <option value="3">Sushi</option>
+        <option value="4">Pasta</option>
+    </select>
+    <input type="number" id="quantity" placeholder="Quantity">
+    <button onclick="placeOrder()">Place Order</button>
+
+    <h2>Orders</h2>
+    <ul id="order-list"></ul>
+
+    <script>
+        async function placeOrder() {
+            const restaurantId = document.getElementById("restaurant").value;
+            const itemId = document.getElementById("item").value;
+            const quantity = parseInt(document.getElementById("quantity").value);
+
+            const response = await fetch("/place-order", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ restaurant_id: restaurantId, item_id: itemId, quantity: quantity })
+            });
+
+            if (response.ok) {
+                alert("Order placed successfully!");
+                const data = await response.json();
+                const orderList = document.getElementById("order-list");
+                orderList.innerHTML += `<li>Restaurant: ${data.restaurant}, Item: ${data.item}, Quantity: ${data.quantity}, Total Price: ${data.total_price}</li>`;
+            } else {
+                alert("Error placing the order.");
+            }
+        }
+    </script>
+</body>
+</html>
